@@ -11,9 +11,10 @@ export async function authMiddleware(req, res, next) {
 
     const idToken = authorization.split("Bearer ")[1];
 
-    const decodedToken = await admin().verifyIdToken(idToken);
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
     req.user = decodedToken;
-    return await next(req, res);
+    
+    return next();
   } catch (error) {
     return res.status(403).json({ error: "Unauthorized: " + String(error) });
   }
