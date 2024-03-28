@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node App.js"
+    "start": "node src/App.js",
+    "nodemon": "nodemon src/App.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,10 @@
     "express": "^4.18.3",
     "firebase": "^10.9.0",
     "firebase-admin": "^12.0.0",
-    "mongoose": "^8.2.3"
+    "mongoose": "^8.2.3",
+    "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17"
   }
 }
