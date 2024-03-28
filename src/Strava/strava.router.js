@@ -1,10 +1,6 @@
-import express, { Router, request } from 'express';
+import { Router } from 'express';
 
-import {
-  loginRoute,
-  callback
-  // refreshToken
-} from './strava.api.js';
+import { loginRoute, callback, refreshToken } from './strava.api.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
@@ -21,6 +17,6 @@ router.use(
 
 router.get('/login', loginRoute);
 router.get('/callback', callback);
-// router.get('/refresh_token', refreshToken);
+router.get('/refresh_token', refreshToken);
 
 export default router;
