@@ -10,7 +10,14 @@ import cors from 'cors';
 
 const router = Router();
 
-router.use(cors()).use(bodyParser.urlencoded({ extended: true }));
+router.use(bodyParser.urlencoded({ extended: true }));
+
+router.use(
+  cors({
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200
+  })
+);
 
 router.get('/login', loginRoute);
 router.get('/callback', callback);
