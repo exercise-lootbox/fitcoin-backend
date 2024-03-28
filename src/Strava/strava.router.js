@@ -4,7 +4,7 @@ import {
   loginRoute,
   callback
   // refreshToken
-} from '../controller/strava.api.js';
+} from './strava.api.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
