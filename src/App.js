@@ -4,6 +4,8 @@ import { authMiddleware } from './authMiddleware.js';
 import { initializeApp } from 'firebase-admin/app';
 import 'dotenv/config.js';
 import stravaRouter from './routes/strava.router.js';
+import mongoose from 'mongoose';
+import UserRoutes from './Users/UserRoutes.js';
 
 // Connect to Firebase
 const firebaseConfig = {
@@ -15,22 +17,20 @@ const firebaseConfig = {
   appId: process.env.FIREBASE_APP_ID
 };
 
+try {
+  mongoose.connect(process.env.DB_CONNECTION_STRING);
+  console.log('Connected to MongoDB');
+} catch (error) {
+  console.log(error);
+}
+
 initializeApp(firebaseConfig);
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Specify routes which should be authed like this
-app.use('/authtest', authMiddleware);
-
-app.get('/hello', (req, res) => {
-  res.send('Hello World!');
-});
-app.get('/authtest', (req, res) => {
-  res.send('Authenticated! UserId: ' + req.user.uid);
-});
-
+UserRoutes(app);
 app.use('/api/strava', stravaRouter);
 
 app.listen(process.env.PORT || 4000);
