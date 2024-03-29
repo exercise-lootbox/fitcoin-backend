@@ -29,6 +29,7 @@
     "request": "^2.88.2"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.17"
+    "@types/cors": "^2.8.17",
+    "prettier": "3.2.5"
   }
 }
