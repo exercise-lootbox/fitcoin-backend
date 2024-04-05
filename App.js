@@ -5,6 +5,7 @@ import { initializeApp } from "firebase-admin/app";
 import "dotenv/config.js";
 import mongoose from "mongoose";
 import UserRoutes from "./Users/UserRoutes.js";
+import SearchRoutes from "./Search/SearchRoutes.js";
 
 // Connect to Firebase
 const firebaseConfig = {
@@ -30,5 +31,6 @@ app.use(cors());
 app.use(express.json());
 
 UserRoutes(app);
+SearchRoutes(app);
 
 app.listen(process.env.PORT || 4000);
