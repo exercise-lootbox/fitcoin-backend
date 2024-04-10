@@ -156,7 +156,6 @@ export default function SearchRoutes(app) {
 
     app.get("/api/search", (req, res) => {
         const parameters = req.query;
-        console.log(parameters);
         // Make API call to Strava and get all activities for current athlete
         const athleteActivities = sampleResponse;
         // Filter activities based on search term
