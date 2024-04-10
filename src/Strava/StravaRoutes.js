@@ -22,9 +22,14 @@ export default function StravaRoutes(app) {
         approval_prompt: "auto",
         scope: scope,
       });
-      res.redirect(
-        "https://www.strava.com/api/v3/oauth/authorize?" + params.toString(),
-      );
+      console.log("params:", params.toString());
+      res.json({
+        redirectURL:
+          "https://www.strava.com/api/v3/oauth/authorize?" + params.toString(),
+      });
+      console.log("Redirecting to Strava");
+    } else {
+      res.json({ error: "Client ID not found" });
     }
   };
 
@@ -54,43 +59,24 @@ export default function StravaRoutes(app) {
       request.post(authOptions, (error, response, body) => {
         if (!error && response.statusCode === 200) {
           const responseBody = JSON.parse(body);
-          const access_token = responseBody.access_token;
-          const refresh_token = responseBody.refresh_token;
-          const expires_at = responseBody.expires_at;
-          const expires_in = responseBody.expires_in;
+          const accessToken = responseBody.access_token;
+          const refreshToken = responseBody.refresh_token;
+          const expiresAt = responseBody.expires_at;
+          const stravaId = responseBody.athlete.id;
           console.log("responseBody:", responseBody);
 
           // we can also pass the token to the browser to make requests from there
-          if (access_token) {
+          if (accessToken) {
             const params = new URLSearchParams({
-              access_token: access_token,
-              refresh_token: refresh_token,
-              expires_in: expires_in,
-              code: code,
+              accessToken,
+              refreshToken,
+              expiresAt,
+              stravaId,
             });
-
-            // try {
-            //   // getting userID from the localstorage
-            //   const hashedToken = localStorage.getItem('jwtToken');
-            //   if (hashedToken && process.env.JWT_SECRET) {
-            //     const decodedID = jwt.verify(hashedToken, process.env.JWT_SECRET);
-
-            //     // addToken(
-            //     //   decodedID.userId,
-            //     //   access_token,
-            //     //   refresh_token,
-            //     //   expires_at,
-            //     //   expires_in,
-            //     //   scope,
-            //     // )
-            //   }
-            // } catch (e) {
-            //   console.log('JWT token is not valid');
-            // }
 
             // we have everything that we need, access_token, refresh_token
             console.log("params:", params.toString());
-            res.redirect("http://localhost:3000/?" + params.toString());
+            res.redirect("http://localhost:3000/home?" + params.toString());
           } else {
             const params = new URLSearchParams({
               error: "invalid_token",
@@ -149,15 +135,24 @@ export default function StravaRoutes(app) {
       refreshToken: req.body.refreshToken,
       expiresAt: req.body.expiresAt,
     };
+    try {
+      const user = await dao.createStravaUser(body);
 
-    const user = await dao.createStravaUser(body);
+      if (!user) {
+        res.sendStatus(400);
+        return;
+      }
 
-    if (!user) {
-      res.sendStatus(400);
-      return;
+      res.json(user);
+    } catch (error) {
+      if (error.code === 11000) {
+        res.status(409).json({ error: "Duplicate user ID" });
+      } else {
+        // Handle other errors
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
+      }
     }
-
-    res.json(user);
   };
 
   const getStravaUser = async (req, res) => {
@@ -211,11 +206,17 @@ export default function StravaRoutes(app) {
   };
 
   // All the Strava routes will be authenticated
-  app.use("/api/strava", authMiddleware);
+  app.use("/api/strava", (req, res, next) => {
+    if (req.path !== "/callback") {
+      authMiddleware(req, res, next);
+    } else {
+      next();
+    }
+  });
 
   // Integration Routes
   app.get("/api/strava/login", loginRoute);
-  app.get("api/strava/callback", callback);
+  app.get("/api/strava/callback", callback);
   app.post("/refresh_token", refreshToken);
 
   // Define Routes

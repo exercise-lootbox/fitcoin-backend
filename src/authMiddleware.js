@@ -1,4 +1,4 @@
-import admin from 'firebase-admin'
+import admin from "firebase-admin";
 
 // This middleware uses Firebase Authentication to verify the user's token.
 export async function authMiddleware(req, res, next) {
@@ -13,7 +13,7 @@ export async function authMiddleware(req, res, next) {
 
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     req.user = decodedToken;
-    
+
     return next();
   } catch (error) {
     return res.status(403).json({ error: "Unauthorized: " + String(error) });
