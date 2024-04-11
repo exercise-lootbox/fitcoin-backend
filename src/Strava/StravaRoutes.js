@@ -14,7 +14,6 @@ export default function StravaRoutes(app) {
   const loginRoute = async (req, res) => {
     const scope = "activity:read_all";
     if (client_id) {
-      console.log("Client ID:", client_id);
       const params = new URLSearchParams({
         client_id: client_id,
         redirect_uri: redirect_uri,
@@ -22,12 +21,10 @@ export default function StravaRoutes(app) {
         approval_prompt: "auto",
         scope: scope,
       });
-      console.log("params:", params.toString());
       res.json({
         redirectURL:
           "https://www.strava.com/api/v3/oauth/authorize?" + params.toString(),
       });
-      console.log("Redirecting to Strava");
     } else {
       res.json({ error: "Client ID not found" });
     }
@@ -63,7 +60,6 @@ export default function StravaRoutes(app) {
           const refreshToken = responseBody.refresh_token;
           const expiresAt = responseBody.expires_at;
           const stravaId = responseBody.athlete.id;
-          console.log("responseBody:", responseBody);
 
           // we can also pass the token to the browser to make requests from there
           if (accessToken) {
@@ -74,8 +70,7 @@ export default function StravaRoutes(app) {
               stravaId,
             });
 
-            // we have everything that we need, access_token, refresh_token
-            console.log("params:", params.toString());
+            // we have everything that we need, access_token, refresh_token());
             res.redirect("http://localhost:3000/home?" + params.toString());
           } else {
             const params = new URLSearchParams({
