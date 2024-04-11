@@ -26,7 +26,7 @@ export default function SearchRoutes(app) {
         "start_latlng" : null,
         "end_latlng" : null,
         "location_city" : "Boston",
-        "location_state" : null,
+        "location_state" : "Massachusetts",
         "location_country" : "United States",
         "achievement_count" : 0,
         "kudos_count" : 3,
