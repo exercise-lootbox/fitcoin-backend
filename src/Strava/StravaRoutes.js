@@ -200,6 +200,22 @@ export default function StravaRoutes(app) {
     res.json(response);
   };
 
+  // const getStravaCredentials = async (req, res) => {
+  //   const { userId } = req.params;
+  //   const user = await dao.findStravaUserById(userId);
+
+  //   if (!user) {
+  //     res.sendStatus(404);
+  //     return;
+  //   }
+
+  //   res.json({
+  //     accessToken: user.accessToken,
+  //     refreshToken: user.refreshToken,
+  //     expiresAt: user.expiresAt,
+  //   });
+  // };
+
   // All the Strava routes will be authenticated
   app.use("/api/strava", (req, res, next) => {
     if (req.path !== "/callback") {
@@ -212,7 +228,7 @@ export default function StravaRoutes(app) {
   // Integration Routes
   app.get("/api/strava/login", loginRoute);
   app.get("/api/strava/callback", callback);
-  app.post("/refresh_token", refreshToken);
+  app.post("api/strava/refresh_token", refreshToken);
 
   // Define Routes
   app.post("/api/strava/:userId", createStravaUser);
