@@ -13,6 +13,18 @@ export default function UserRoutes(app) {
     res.json(user);
   };
 
+  const updateUser = async (req, res) => {
+    const { uid } = req.params;
+    const user = await dao.updateUser(uid, req.body);
+
+    if (!user) {
+      res.sendStatus(404);
+      return;
+    }
+
+    res.json(user);
+  };
+
   const findUserById = async (req, res) => {
     const { uid } = req.params;
     const user = await dao.findUserById(uid);
@@ -29,6 +41,7 @@ export default function UserRoutes(app) {
   app.use("/api/users/:uid", authMiddleware);
 
   // Define Routes
+  app.put("/api/users/:uid", updateUser);
   app.post("/api/users", createUser);
   app.get("/api/users/:uid", findUserById);
 }

@@ -2,6 +2,7 @@ import { authMiddleware } from "../authMiddleware.js";
 import * as dao from "./strava-dao.js";
 import dotenv from "dotenv";
 import request from "request";
+import querystring from "querystring";
 
 dotenv.config({ path: "../.env" });
 
@@ -33,7 +34,7 @@ export default function StravaRoutes(app) {
   const callback = async (req, res) => {
     // your application requests refresh and access tokens
     // after checking the state parameter
-    const code = req.query.code;
+    const code = req.query.code || null;
     const grant_type = "authorization_code";
 
     try {
@@ -61,23 +62,20 @@ export default function StravaRoutes(app) {
           const expiresAt = responseBody.expires_at;
           const stravaId = responseBody.athlete.id;
 
-          // we can also pass the token to the browser to make requests from there
-          if (accessToken) {
-            const params = new URLSearchParams({
-              accessToken,
-              refreshToken,
-              expiresAt,
-              stravaId,
-            });
-
-            // we have everything that we need, access_token, refresh_token());
-            res.redirect("http://localhost:3000/home?" + params.toString());
-          } else {
-            const params = new URLSearchParams({
-              error: "invalid_token",
-            });
-            res.redirect("http://localhost:3000/?" + params.toString());
-          }
+          res.redirect(
+            "http://localhost:3000/#/profile/#" +
+              querystring.stringify({
+                accessToken,
+                refreshToken,
+                expiresAt,
+                stravaId,
+              }),
+          );
+        } else {
+          res.redirect(
+            "http://localhost:3000/#/profile/#" +
+              querystring.stringify({ error: "invalid_token" }),
+          );
         }
       });
     } catch (error) {
@@ -218,7 +216,9 @@ export default function StravaRoutes(app) {
 
   // All the Strava routes will be authenticated
   app.use("/api/strava", (req, res, next) => {
-    if (req.path !== "/callback") {
+    console.log("Strava route hit");
+    console.log("req.path", req.path);
+    if (req.path !== "/callback" && req.path !== "/refresh_token") {
       authMiddleware(req, res, next);
     } else {
       next();
