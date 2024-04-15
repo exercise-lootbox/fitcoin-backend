@@ -11,9 +11,15 @@ const userSchema = new mongoose.Schema(
       enum: ["USER", "ADMIN"],
       default: "USER",
     },
-    stravaId: { type: String, required: false, default: "" },
+    // stravaId: { type: String, required: false, default: "" },
+    stravaId: {
+      ref: "StravaModel",
+      type: String,
+      required: false,
+      default: "",
+    },
   },
-  { collection: "users" }
+  { collection: "users" },
 );
 
 export default userSchema;
