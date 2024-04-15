@@ -9,29 +9,31 @@ export const findStravaUserById = (userId) => {
 };
 
 export const updateAccessToken = async (userId, newAccessToken) => {
-  const updatedStravaUser = await stravaModel.findOneAndUpdate(
+  let updatedStravaUser = await stravaModel.findOneAndUpdate(
     { _id: userId },
     { accessToken: newAccessToken },
     { new: true },
   );
+  console.log("updatedStravaUser", updatedStravaUser);
 
-  if (!updatedDoc) {
-    throw new Error("User not found");
-  }
+  // if (!updatedDoc) {
+  //   throw new Error("User not found");
+  // }
 
   return updatedStravaUser.accessToken;
 };
 
 export const updateRefreshToken = async (userId, newRefreshToken) => {
+  console.log("userId", userId);
   const updatedStravaUser = await stravaModel.findOneAndUpdate(
     { _id: userId },
     { refreshToken: newRefreshToken },
     { new: true },
   );
 
-  if (!updatedDoc) {
-    throw new Error("User not found");
-  }
+  // if (!updatedDoc) {
+  //   throw new Error("User not found");
+  // }
 
   return updatedStravaUser.refreshToken;
 };
@@ -43,9 +45,9 @@ export const updateExpiresAt = async (userId, newExpiresAt) => {
     { new: true },
   );
 
-  if (!updatedDoc) {
-    throw new Error("User not found");
-  }
+  // if (!updatedDoc) {
+  //   throw new Error("User not found");
+  // }
 
   return updatedStravaUser.expiresAt;
 };

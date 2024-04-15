@@ -1,5 +1,6 @@
 import { authMiddleware } from "../authMiddleware.js";
-import * as dao from "./strava-dao.js";
+import * as stravaDao from "./strava-dao.js";
+import * as userDao from "../Users/user-dao.js";
 import dotenv from "dotenv";
 import request from "request";
 import querystring from "querystring";
@@ -43,8 +44,8 @@ export default function StravaRoutes(app) {
         body: JSON.stringify({
           client_id,
           client_secret,
-          code,
           grant_type,
+          code,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -63,7 +64,7 @@ export default function StravaRoutes(app) {
           const stravaId = responseBody.athlete.id;
 
           res.redirect(
-            "http://localhost:3000/#/profile/#" +
+            "http://localhost:3000/" +
               querystring.stringify({
                 accessToken,
                 refreshToken,
@@ -73,7 +74,7 @@ export default function StravaRoutes(app) {
           );
         } else {
           res.redirect(
-            "http://localhost:3000/#/profile/#" +
+            "http://localhost:3000/" +
               querystring.stringify({ error: "invalid_token" }),
           );
         }
@@ -96,7 +97,7 @@ export default function StravaRoutes(app) {
           refresh_token: refresh_token,
         }),
         headers: {
-          "content-type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
           Authorization:
             "Basic " +
             Buffer.from(client_id + ":" + client_secret).toString("base64"),
@@ -105,9 +106,12 @@ export default function StravaRoutes(app) {
 
       request.post(authOptions, (error, response, body) => {
         if (!error && response.statusCode === 200) {
-          const access_token = body.access_token;
+          const tokenObject = JSON.parse(body);
+          const { access_token, refresh_token, expires_at } = tokenObject;
           res.send({
-            access_token: access_token,
+            access_token,
+            refresh_token,
+            expires_at,
           });
         }
       });
@@ -129,7 +133,8 @@ export default function StravaRoutes(app) {
       expiresAt: req.body.expiresAt,
     };
     try {
-      const user = await dao.createStravaUser(body);
+      userDao.updateUser(userId, { stravaId: body.stravaId });
+      const user = await stravaDao.createStravaUser(body);
 
       if (!user) {
         res.sendStatus(400);
@@ -150,7 +155,7 @@ export default function StravaRoutes(app) {
 
   const getStravaUser = async (req, res) => {
     const { userId } = req.params;
-    const user = await dao.findStravaUserById(userId);
+    const user = await stravaDao.findStravaUserById(userId);
 
     if (!user) {
       res.sendStatus(404);
@@ -161,36 +166,40 @@ export default function StravaRoutes(app) {
   };
 
   const updateStravaUser = async (req, res) => {
+    console.log("req", req.body);
     const { userId } = req.params;
     const accessToken = req.body.accessToken;
     const refreshToken = req.body.refreshToken;
     const expiresAt = req.body.expiresAt;
-    const response = {};
+    let response = {};
 
     try {
       if (accessToken) {
-        const result = await dao.updateAccessToken(userId, accessToken);
+        console.log("Updating access token");
+        const result = await stravaDao.updateAccessToken(userId, accessToken);
         response = {
           ...response,
           accessToken: result,
         };
       }
       if (refreshToken) {
-        const result = await dao.updateRefreshToken(userId, refreshToken);
+        console.log("Updating refresh token");
+        const result = await stravaDao.updateRefreshToken(userId, refreshToken);
         response = {
           ...response,
           refreshToken: result,
         };
       }
       if (expiresAt) {
-        const result = await dao.updateExpiresAt(userId, expiresAt);
+        console.log("Updating expiresat");
+        const result = await stravaDao.updateExpiresAt(userId, expiresAt);
         response = {
           ...response,
           expiresAt: result,
         };
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       res.sendStatus(500);
       return;
     }
@@ -216,8 +225,6 @@ export default function StravaRoutes(app) {
 
   // All the Strava routes will be authenticated
   app.use("/api/strava", (req, res, next) => {
-    console.log("Strava route hit");
-    console.log("req.path", req.path);
     if (req.path !== "/callback" && req.path !== "/refresh_token") {
       authMiddleware(req, res, next);
     } else {
@@ -228,7 +235,7 @@ export default function StravaRoutes(app) {
   // Integration Routes
   app.get("/api/strava/login", loginRoute);
   app.get("/api/strava/callback", callback);
-  app.post("api/strava/refresh_token", refreshToken);
+  app.post("/api/strava/refresh_token", refreshToken);
 
   // Define Routes
   app.post("/api/strava/:userId", createStravaUser);

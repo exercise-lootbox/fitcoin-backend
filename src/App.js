@@ -19,9 +19,9 @@ const firebaseConfig = {
 
 try {
   mongoose.connect(process.env.DB_CONNECTION_STRING);
-  console.log("Connected to MongoDB");
+  console.error("Connected to MongoDB");
 } catch (error) {
-  console.log(error);
+  console.error(error);
 }
 
 initializeApp(firebaseConfig);

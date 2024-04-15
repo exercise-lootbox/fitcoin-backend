@@ -6,7 +6,11 @@ export const createUser = (user) => {
 
 export const findUserById = (userId) => userModel.findById(userId);
 
-export const updateUser = (userId, user) =>
-  userModel.updateOne({ _id: userId }, { $set: user });
+export const updateUser = async (userId, user) => {
+  await userModel.updateOne({ _id: userId }, { $set: user });
+  const updatedUser = await userModel.findOne({ _id: userId });
+
+  return updatedUser;
+};
 
 export const deleteUser = (userId) => userModel.deleteOne({ _id: userId });
