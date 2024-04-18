@@ -13,3 +13,12 @@ export const deleteUser = (userId) => userModel.deleteOne({ _id: userId });
 
 export const addStravaId = (userId, stravaId) =>
   userModel.updateOne({ _id: userId }, { $set: { stravaId } });
+
+export const getCoins = async (userId) => {
+  const user = await findUserById(userId);
+  return user.coins;
+};
+
+export const updateCoins = async (userId, coins) => {
+  await userModel.updateOne({ _id: userId }, { $set: { coins } });
+};
