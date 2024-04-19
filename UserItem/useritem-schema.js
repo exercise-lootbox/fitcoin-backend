@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const userItemSchema = new mongoose.Schema(
   {
     _id: String,
@@ -6,3 +8,5 @@ const userItemSchema = new mongoose.Schema(
   },
   { collection: "user_item" },
 );
+
+export default userItemSchema;

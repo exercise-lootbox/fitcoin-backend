@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import lootboxSchema from "./strava-schema.js";
+import lootboxSchema from "./lootbox-schema.js";
 
 const lootboxModel = mongoose.model("LootboxModel", lootboxSchema);
 

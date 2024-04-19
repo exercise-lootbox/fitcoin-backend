@@ -11,15 +11,18 @@ export default function LootboxRoutes(app) {
   };
 
   const getLootbox = async (req, res) => {
-    try {
-      const { lootboxId } = req.params;
-      const lootbox = await lootboxDao.findLootboxById(lootboxId);
-      res.json(lootbox);
-    } catch (error) {
-      res.status(500).json({ error: String(error) });
+    const { lootboxId } = req.params;
+    // res.json({ lootboxId });
+    const lootbox = await lootboxDao.findLootboxById(lootboxId);
+
+    if (!lootbox) {
+      res.sendStatus(404);
+      return;
     }
+    console.log("lootbox", lootbox);
+    res.json(lootbox);
   };
 
-  app.get("/api/lootboxes", getLootboxes);
-  app.get("/api/lootbox/:lootboxId", getLootbox);
+  app.get("/api/lootbox/", getLootboxes);
+  app.get("/api/lootbox/:lootboxId/", getLootbox);
 }

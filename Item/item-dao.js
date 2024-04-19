@@ -1,4 +1,4 @@
-import itemModel from "./item-model";
+import itemModel from "./item-model.js";
 
 export const findItems = async () => {
   const items = await itemModel.find();
@@ -11,6 +11,6 @@ export const findItemById = async (itemId) => {
 };
 
 export const findAllItemsByLootbox = async (lootboxId) => {
-  const items = await itemModel.find({ lootbox: lootboxId });
+  const items = await itemModel.find({ lootbox_id: lootboxId });
   return items;
 };

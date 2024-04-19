@@ -1,4 +1,6 @@
-const lootBoxSchema = new mongoose.Schema(
+import mongoose from "mongoose";
+
+const lootboxSchema = new mongoose.Schema(
   {
     _id: { type: String, required: true },
     name: { type: String, required: true },
@@ -7,3 +9,5 @@ const lootBoxSchema = new mongoose.Schema(
   },
   { collection: "lootbox" },
 );
+
+export default lootboxSchema;

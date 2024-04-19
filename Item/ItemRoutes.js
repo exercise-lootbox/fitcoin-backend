@@ -26,11 +26,11 @@ export default function ItemRoutes(app) {
       const items = await itemDao.findAllItemsByLootbox(boxId);
       res.json(items);
     } catch (error) {
-      res.status(500).json({ error: String(error) });
+      res.status(500).json({ error: "ERRROR" });
     }
   };
 
   app.get("/api/items", getItems);
-  app.get("/api/item/:itemId", getItem);
-  app.get("/api/items/:boxId", getBoxItems);
+  app.get("/api/items/:itemId", getItem);
+  app.get("/api/items/lootbox/:boxId", getBoxItems);
 }

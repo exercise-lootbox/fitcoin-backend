@@ -1,6 +1,6 @@
-import userItemModel from "./useritem-model";
+import userItemModel from "./useritem-model.js";
 import mongoose from "mongoose";
-import * as userDao from "../Users/user-dao";
+import * as userDao from "../Users/user-dao.js";
 
 export const createUserItem = async (userItem) => {
   await userItemModel.create(userItem);
