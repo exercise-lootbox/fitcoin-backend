@@ -2,7 +2,7 @@ import * as stravaDao from "../Strava/strava-dao.js";
 import * as stravaRoutes from "../Strava/StravaRoutes.js";
 import axios from "axios";
 
-const ONE_DAY_SECONDS = 7 * 24 * 60 * 60;
+const ONE_DAY_SECONDS = 24 * 60 * 60;
 const activities_link = "https://www.strava.com/api/v3/athlete/activities";
 
 export default function SearchRoutes(app) {
@@ -179,7 +179,6 @@ export default function SearchRoutes(app) {
             // Grab the activities from Strava
             const params = new URLSearchParams({
                 before: nowInSeconds,
-                after: nowInSeconds - ONE_DAY_SECONDS, // Should be the timestamp of when user was created
             });
     
             const config = {

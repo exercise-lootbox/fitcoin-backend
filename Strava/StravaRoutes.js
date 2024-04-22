@@ -12,7 +12,7 @@ const redirect_uri = process.env.STRAVA_REDIRECT_URI;
 const frontendURL = process.env.FRONTEND_URL;
 const auth_link = "https://www.strava.com/api/v3/oauth/token";
 const activities_link = "https://www.strava.com/api/v3/athlete/activities";
-const ONE_DAY_SECONDS = 7 * 24 * 60 * 60;
+const ONE_DAY_SECONDS = 24 * 60 * 60;
 
 // Updates the user's Strava auth tokens if they are expired.
 export async function refreshAccessTokenIfNeeded(stravaUser) {
@@ -255,7 +255,6 @@ export default function StravaRoutes(app) {
     // Grab the activities from Strava
     const params = new URLSearchParams({
       before: nowInSeconds,
-      after: nowInSeconds - ONE_DAY_SECONDS,
     });
 
     const config = {
