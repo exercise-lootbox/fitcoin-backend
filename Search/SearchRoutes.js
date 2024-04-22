@@ -1,3 +1,10 @@
+import * as stravaDao from "../Strava/strava-dao.js";
+import * as stravaRoutes from "../Strava/StravaRoutes.js";
+import axios from "axios";
+
+const ONE_DAY_SECONDS = 7 * 24 * 60 * 60;
+const activities_link = "https://www.strava.com/api/v3/athlete/activities";
+
 export default function SearchRoutes(app) {
     
     // For testing, delete later
@@ -124,9 +131,6 @@ export default function SearchRoutes(app) {
         // Check if given attribute values are included in corresponding activity attribute values
         for (const attribute of ["name","location_city","location_state","location_country"]) {
             if (parameters[attribute] && !activity[attribute]?.toLowerCase().includes(parameters[attribute])) {
-                console.log(`False for: ${attribute}`)
-                console.log(parameters[attribute])
-                console.log(activity[attribute])
                 return false;
             }
         }
@@ -154,12 +158,46 @@ export default function SearchRoutes(app) {
         return true;
     }
 
-    app.get("/api/search", (req, res) => {
+    const getSearchResults = async (req, res) => {
         const parameters = req.query;
+        let athleteActivities = sampleResponse;
+
+        const stravaId = parameters["stravaId"];
+        const nowInSeconds = Math.round(Date.now() / 1000);
+
         // Make API call to Strava and get all activities for current athlete
-        const athleteActivities = sampleResponse;
+        if (stravaId !== undefined && stravaId !== "") {
+            let stravaUser = await stravaDao.findStravaUserByStravaId(stravaId);
+            try {
+                stravaUser = await stravaRoutes.refreshAccessTokenIfNeeded(stravaUser);
+            } catch (error) {
+                res
+                    .status(500)
+                    .json({ error: "Failed to refresh access token: " + error.message });
+                return;
+            }
+            // Grab the activities from Strava
+            const params = new URLSearchParams({
+                before: nowInSeconds,
+                after: nowInSeconds - ONE_DAY_SECONDS, // Should be the timestamp of when user was created
+            });
+    
+            const config = {
+                headers: { Authorization: `Bearer ${stravaUser.accessToken}` },
+            };
+    
+            const response = await axios.get(
+                activities_link + "?" + params.toString(),
+                config,
+            );
+
+            athleteActivities = response.data;
+        }
+
         // Filter activities based on search term
         const searchResults = athleteActivities.filter(activity => matchesParams(activity, parameters));
         res.send(searchResults);
-    });
+    }
+
+    app.get("/api/search", getSearchResults);
 }
