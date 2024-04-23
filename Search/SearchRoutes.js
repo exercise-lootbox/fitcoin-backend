@@ -159,7 +159,9 @@ export default function SearchRoutes(app) {
     }
 
     const getSearchResults = async (req, res) => {
-        const parameters = req.query;
+        const parameters = Object.fromEntries(
+            Object.entries(req.query).map(([key, value]) => [key, value.toLowerCase()])
+        );
         let athleteActivities = sampleResponse;
 
         const stravaId = parameters["stravaId"];
