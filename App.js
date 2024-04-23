@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import { authMiddleware } from "./authMiddleware.js";
 import { initializeApp } from "firebase-admin/app";
 import "dotenv/config.js";
 import mongoose from "mongoose";
