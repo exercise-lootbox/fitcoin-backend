@@ -8,6 +8,7 @@ import UserRoutes from "./Users/UserRoutes.js";
 import StravaRoutes from "./Strava/StravaRoutes.js";
 import LootboxRoutes from "./Lootbox/LootboxRoutes.js";
 import ItemRoutes from "./Item/ItemRoutes.js";
+import SearchRoutes from "./Search/SearchRoutes.js";
 
 // Connect to Firebase
 const firebaseConfig = {
@@ -36,5 +37,6 @@ UserRoutes(app);
 StravaRoutes(app);
 LootboxRoutes(app);
 ItemRoutes(app);
+SearchRoutes(app);
 
 app.listen(process.env.PORT || 4000);
