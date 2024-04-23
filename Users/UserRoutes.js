@@ -25,10 +25,23 @@ export default function UserRoutes(app) {
     res.json(user);
   };
 
+  const buyItem = async (req, res) => {
+    try {
+      const { uid } = req.params;
+      const { itemId, coins } = req.body;
+
+      await dao.buyItem(uid, itemId, coins);
+      res.status(200).json({ message: "Item bought" });
+    } catch (error) {
+      res.status(400).json({ error: String(error) });
+    }
+  };
+
   // Define Authenticated Routes
   app.use("/api/users/:uid", authMiddleware);
 
   // Define Routes
   app.post("/api/users", createUser);
+  app.post("/api/users/buy/:uid/", buyItem);
   app.get("/api/users/:uid", findUserById);
 }
