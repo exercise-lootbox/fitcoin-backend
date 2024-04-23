@@ -12,14 +12,12 @@ export default function LootboxRoutes(app) {
 
   const getLootbox = async (req, res) => {
     const { lootboxId } = req.params;
-    // res.json({ lootboxId });
     const lootbox = await lootboxDao.findLootboxById(lootboxId);
 
     if (!lootbox) {
       res.sendStatus(404);
       return;
     }
-    console.log("lootbox", lootbox);
     res.json(lootbox);
   };
 
