@@ -7,7 +7,6 @@ const activities_link = "https://www.strava.com/api/v3/athlete/activities";
 
 export default function SearchRoutes(app) {
     
-    // For testing, delete later
     const sampleResponse = 
     [ {
         "resource_state" : 2,
