@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
     coins: { type: Number, required: false, default: 0 },
+    items: { type: [String], required: false, default: [] },
   },
   { collection: "users" },
 );
