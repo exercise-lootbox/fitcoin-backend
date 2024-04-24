@@ -54,3 +54,11 @@ export const updateCoins = async (userId, coins) => {
 export const updateEmail = async (userId, email) => {
   await userModel.updateOne({ _id: userId }, { $set: { email } });
 };
+
+export const makeAdmin = async (userId) => {
+  await userModel.updateOne({ _id: userId }, { $set: { adminId: userId } });
+};
+
+export const removeAdmin = async (userId) => {
+  await userModel.updateOne({ _id: userId }, { $unset: { adminId: "" } });
+};

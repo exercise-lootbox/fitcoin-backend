@@ -10,3 +10,12 @@ export const updateLastUpdate = async (adminId) => {
     { $set: { lastUpdate: new Date() } },
   );
 };
+
+export const createAdmin = async (adminId) => {
+  const admin = { _id: adminId, adminSince: new Date() };
+  await adminModel.create(admin);
+};
+
+export const deleteAdmin = async (adminId) => {
+  await adminModel.deleteOne({ _id: adminId });
+};

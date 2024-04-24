@@ -37,6 +37,7 @@ export default function UserRoutes(app) {
     // Filter out sensitive information
     delete user.email;
     delete user.dob;
+    delete user.adminId;
 
     res.json(user);
   };
