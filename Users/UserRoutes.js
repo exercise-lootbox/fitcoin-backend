@@ -75,6 +75,16 @@ export default function UserRoutes(app) {
     res.sendStatus(200);
   };
 
+  const retrieveItems = async (req, res) => {
+    try {
+      const { uid } = req.params;
+      const items = await dao.retrieveItems(uid);
+      res.json(items);
+    } catch (error) {
+      res.status(400).json({ error: String(error) });
+    }
+  };
+
   // Define Authenticated Routes
   app.use("/api/users/:uid", authMiddleware);
   app.use("/api/users/email/:uid", authMiddleware);
@@ -86,4 +96,5 @@ export default function UserRoutes(app) {
   app.get("/api/users/other/:uid", findOtherUserById);
   app.put("/api/users/:uid", updateUser);
   app.put("/api/users/email/:uid", updateEmail);
+  app.get("/api/users/items/:uid/", retrieveItems);
 }

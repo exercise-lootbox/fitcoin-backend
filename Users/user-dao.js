@@ -62,3 +62,8 @@ export const makeAdmin = async (userId) => {
 export const removeAdmin = async (userId) => {
   await userModel.updateOne({ _id: userId }, { $unset: { adminId: "" } });
 };
+
+export const retrieveItems = async (userId) => {
+  const user = await findUserById(userId);
+  return user.items;
+};
