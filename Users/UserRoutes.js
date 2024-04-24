@@ -35,10 +35,10 @@ export default function UserRoutes(app) {
     }
 
     // Filter out sensitive information
-    delete user.email;
-    delete user.dob;
-    delete user.adminId;
-
+    user.email = null;
+    user.dob = null;
+    user.adminId = null;
+    
     res.json(user);
   };
 
@@ -86,7 +86,6 @@ export default function UserRoutes(app) {
   };
 
   // Define Authenticated Routes
-  app.use("/api/users/:uid", authMiddleware);
   app.use("/api/users/email/:uid", authMiddleware);
 
   // Define Routes
