@@ -79,6 +79,6 @@ export const getRecentActivities = async (stravaId) => {
 };
 
 export const getRecentCoinsGained = async (stravaId) => {
-  const stravaUser = await stravaModel.findOne({ stravaId: stravaId});
+  const stravaUser = await stravaModel.findOne({ stravaId: stravaId });
   return stravaUser.recentCoinsGained || 0;
-}
+};
