@@ -9,7 +9,7 @@ import LootboxRoutes from "./Lootbox/LootboxRoutes.js";
 import ItemRoutes from "./Item/ItemRoutes.js";
 import SearchRoutes from "./Search/SearchRoutes.js";
 import AdminRoutes from "./Admin/AdminRoutes.js";
-// import AdminRoutes from "./Admin/AdminRoutes.js";
+import SpotlightRoutes from "./Spotlight/SpotlightRoutes.js";
 
 // Connect to Firebase
 const firebaseConfig = {
@@ -40,5 +40,6 @@ LootboxRoutes(app);
 ItemRoutes(app);
 SearchRoutes(app);
 AdminRoutes(app);
+SpotlightRoutes(app);
 
 app.listen(process.env.PORT || 4000);

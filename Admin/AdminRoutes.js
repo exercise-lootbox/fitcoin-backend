@@ -2,6 +2,7 @@ import { authMiddleware } from "../authMiddleware.js";
 import * as dao from "./admin-dao.js";
 import * as userDao from "../Users/user-dao.js";
 import * as stravaDao from "../Strava/strava-dao.js";
+import * as lootboxDao from "../Lootbox/lootbox-dao.js";
 
 export default function AdminRoutes(app) {
   const getAdmin = async (req, res) => {
@@ -97,6 +98,23 @@ export default function AdminRoutes(app) {
     res.sendStatus(200);
   };
 
+  const updateLootboxPrice = async (req, res) => {
+    const { lootboxId } = req.params;
+    const { adminId, price } = req.body;
+
+    const admin = await dao.getAdmin(adminId);
+
+    if (!admin) {
+      res.sendStatus(401).json({ error: "Admin does not exist" });
+      return;
+    }
+
+    await lootboxDao.updateLootboxPrice(lootboxId, price);
+    await dao.updateLastUpdate(adminId);
+
+    res.sendStatus(200);
+  };
+
   // Define Authenticated Routes
   app.use("/api/admin/", authMiddleware);
 
@@ -106,4 +124,5 @@ export default function AdminRoutes(app) {
   app.put("/api/admin/strava/:uid", resetUserStravaSync);
   app.post("/api/admin/:uid", createAdmin);
   app.delete("/api/admin/:uid", deleteAdmin);
+  app.put("/api/admin/lootbox/:lootboxId", updateLootboxPrice);
 }

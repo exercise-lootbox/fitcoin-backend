@@ -20,3 +20,7 @@ export const findLootboxById = async (lootboxId) => {
 export const getItemsByRarity = async (lootboxId, rarity) => {
   return itemModel.find({ lootboxId, rarity });
 };
+
+export const updateLootboxPrice = async (lootboxId, price) => {
+  await lootboxModel.updateOne({ _id: lootboxId }, { $set: { price } });
+}
