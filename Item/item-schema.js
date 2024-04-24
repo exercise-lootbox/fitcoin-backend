@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const itemSchema = new mongoose.Schema(
   {
     _id: { type: String, required: true },
-    lootbox_id: { type: String, required: true },
+    lootbox_id: { type: String, ref: "LootboxModel", required: true },
     name: { type: String, required: true },
     description: { type: String, required: true },
     image: { type: String, required: true },

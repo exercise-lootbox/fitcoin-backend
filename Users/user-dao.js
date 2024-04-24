@@ -50,3 +50,8 @@ export const getCoins = async (userId) => {
 export const updateCoins = async (userId, coins) => {
   await userModel.updateOne({ _id: userId }, { $set: { coins } });
 };
+
+export const retrieveItems = async (userId) => {
+  const user = await findUserById(userId);
+  return user.items;
+};
