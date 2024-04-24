@@ -149,7 +149,14 @@ export default function StravaRoutes(app) {
   };
 
   const getRecentActivities = async (req, res) => {
-    const { stravaId } = req.params;
+    const { userId } = req.params;
+    let stravaUser = await dao.findStravaUserById(userId);
+    if (!stravaUser) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const stravaId = stravaUser.stravaId;
     const lastSyncedAt = await dao.getLastSyncedAt(stravaId);
     const nowInSeconds = Math.round(Date.now() / 1000);
 
@@ -164,7 +171,6 @@ export default function StravaRoutes(app) {
       });
     } else {
       // Sync the user's activities from Strava
-      let stravaUser = await dao.findStravaUserByStravaId(stravaId);
       try {
         stravaUser = await refreshAccessTokenIfNeeded(stravaUser);
       } catch (error) {
@@ -237,10 +243,10 @@ export default function StravaRoutes(app) {
       250 + (2 * movingSeconds) / 60 + (100 * distance) / 1000 + elevation / 10,
     );
   }
-  
+
   const getSpecificActivity = async (req, res) => {
     const { stravaId, activityId } = req.params;
-    
+
     const nowInSeconds = Math.round(Date.now() / 1000);
     // Sync the user's activities from Strava
     let stravaUser = await dao.findStravaUserByStravaId(stravaId);
@@ -271,17 +277,19 @@ export default function StravaRoutes(app) {
       return;
     }
 
-    const activity = response.data.filter((activity) => activity.id === parseInt(activityId));
+    const activity = response.data.filter(
+      (activity) => activity.id === parseInt(activityId),
+    );
 
     res.json(activity[0]);
   };
 
   // Define Authenticated Routes
-  app.use("/api/strava/activities/:stravaId", authMiddleware);
+  app.use("/api/strava/activities/:userId", authMiddleware);
 
   app.get("/api/strava/connect/:uid", connectUserToStrava);
   app.get("/api/strava/callback", callback);
   app.get("/api/strava/:uid", getStravaId);
-  app.get("/api/strava/activities/:stravaId", getRecentActivities);
+  app.get("/api/strava/activities/:userId", getRecentActivities);
   app.get("/api/strava/activities/:stravaId/:activityId", getSpecificActivity);
 }

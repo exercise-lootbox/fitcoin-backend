@@ -25,6 +25,23 @@ export default function UserRoutes(app) {
     res.json(user);
   };
 
+  const findOtherUserById = async (req, res) => {
+    const { uid } = req.params;
+    const user = await dao.findUserById(uid);
+
+    if (!user) {
+      res.sendStatus(404);
+      return;
+    }
+
+    // Filter out sensitive information
+    user.email = null;
+    user.dob = null;
+    user.adminId = null;
+    
+    res.json(user);
+  };
+
   const buyItem = async (req, res) => {
     try {
       const { uid } = req.params;
@@ -35,6 +52,27 @@ export default function UserRoutes(app) {
     } catch (error) {
       res.status(400).json({ error: String(error) });
     }
+  };
+
+  const updateUser = async (req, res) => {
+    const { uid } = req.params;
+    const user = await dao.updateUser(uid, req.body);
+
+    if (!user) {
+      res.sendStatus(404);
+      return;
+    }
+
+    res.json(user);
+  };
+
+  const updateEmail = async (req, res) => {
+    const { uid } = req.params;
+    const { email } = req.body;
+
+    await dao.updateEmail(uid, email);
+
+    res.sendStatus(200);
   };
 
   const retrieveItems = async (req, res) => {
@@ -48,11 +86,14 @@ export default function UserRoutes(app) {
   };
 
   // Define Authenticated Routes
-  app.use("/api/users/:uid", authMiddleware);
+  app.use("/api/users/email/:uid", authMiddleware);
 
   // Define Routes
   app.post("/api/users", createUser);
   app.post("/api/users/buy/:uid/", buyItem);
   app.get("/api/users/:uid", findUserById);
+  app.get("/api/users/other/:uid", findOtherUserById);
+  app.put("/api/users/:uid", updateUser);
+  app.put("/api/users/email/:uid", updateEmail);
   app.get("/api/users/items/:uid/", retrieveItems);
 }
