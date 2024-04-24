@@ -8,6 +8,8 @@ import StravaRoutes from "./Strava/StravaRoutes.js";
 import LootboxRoutes from "./Lootbox/LootboxRoutes.js";
 import ItemRoutes from "./Item/ItemRoutes.js";
 import SearchRoutes from "./Search/SearchRoutes.js";
+import AdminRoutes from "./Admin/AdminRoutes.js";
+// import AdminRoutes from "./Admin/AdminRoutes.js";
 
 // Connect to Firebase
 const firebaseConfig = {
@@ -37,5 +39,6 @@ StravaRoutes(app);
 LootboxRoutes(app);
 ItemRoutes(app);
 SearchRoutes(app);
+AdminRoutes(app);
 
 app.listen(process.env.PORT || 4000);

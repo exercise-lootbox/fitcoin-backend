@@ -1,7 +1,7 @@
-import { authMiddleware } from "../authMiddleware";
-import * as dao from "./admin-dao";
-import * as userDao from "../Users/user-dao";
-import * as stravaDao from "../Strava/strava-dao";
+import { authMiddleware } from "../authMiddleware.js";
+import * as dao from "./admin-dao.js";
+import * as userDao from "../Users/user-dao.js";
+import * as stravaDao from "../Strava/strava-dao.js";
 
 export default function AdminRoutes(app) {
   const getAdmin = async (req, res) => {
@@ -66,6 +66,6 @@ export default function AdminRoutes(app) {
 
   // Define Routes
   app.get("/api/admin/:adminId", getAdmin);
-  app.patch("/api/admin/users/coins/:uid/", addUserCoins);
-  app.patch("/api/admin/strava/:uid/", resetUserStravaSync);
+  app.put("/api/admin/users/coins/:uid", addUserCoins);
+  app.put("/api/admin/strava/:uid", resetUserStravaSync);
 }

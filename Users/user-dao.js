@@ -50,3 +50,7 @@ export const getCoins = async (userId) => {
 export const updateCoins = async (userId, coins) => {
   await userModel.updateOne({ _id: userId }, { $set: { coins } });
 };
+
+export const updateEmail = async (userId, email) => {
+  await userModel.updateOne({ _id: userId }, { $set: { email } });
+};

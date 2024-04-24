@@ -1,4 +1,4 @@
-import adminModel from "./admin-model";
+import adminModel from "./admin-model.js";
 
 export const getAdmin = async (adminId) => {
   return adminModel.findById(adminId);
