@@ -67,3 +67,7 @@ export const retrieveItems = async (userId) => {
   const user = await findUserById(userId);
   return user.items;
 };
+
+export const findAllUsers = async () => {
+  return await userModel.find({});
+};
