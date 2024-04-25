@@ -3,6 +3,7 @@ import axios from "axios";
 import * as dao from "./strava-dao.js";
 import * as userDao from "../Users/user-dao.js";
 import { authMiddleware } from "../authMiddleware.js";
+import { addMemberSpotlight } from "../Spotlight/SpotlightRoutes.js";
 
 dotenv.config({ path: "../.env" });
 
@@ -230,6 +231,9 @@ export default function StravaRoutes(app) {
       const newCoins = currentCoins + coinsGained;
       await userDao.updateCoins(userId, newCoins);
 
+      // Add the user to the spotlight
+      await addMemberSpotlight(userId, coinsGained);
+
       res.json({
         recentActivities: dbActivities,
         coinsGained: coinsGained,
@@ -283,9 +287,6 @@ export default function StravaRoutes(app) {
 
     res.json(activity[0]);
   };
-
-  // Define Authenticated Routes
-  app.use("/api/strava/activities/:userId", authMiddleware);
 
   app.get("/api/strava/connect/:uid", connectUserToStrava);
   app.get("/api/strava/callback", callback);
