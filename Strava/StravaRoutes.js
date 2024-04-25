@@ -232,7 +232,9 @@ export default function StravaRoutes(app) {
       await userDao.updateCoins(userId, newCoins);
 
       // Add the user to the spotlight
-      await addMemberSpotlight(userId, coinsGained);
+      if (coinsGained > 0) {
+        await addMemberSpotlight(userId, coinsGained);
+      }
 
       res.json({
         recentActivities: dbActivities,
