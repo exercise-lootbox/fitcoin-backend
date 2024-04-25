@@ -16,7 +16,7 @@ export default function AdminRoutes(app) {
     res.json(admin);
   };
 
-  const addUserCoins = async (req, res) => {
+  const updateUserCoins = async (req, res) => {
     try {
       const { uid } = req.params;
       const { adminId, coins } = req.body;
@@ -25,16 +25,14 @@ export default function AdminRoutes(app) {
       const user = await userDao.findUserById(uid);
 
       if (!admin || !user) {
-        res.sendStatus(401).json({ error: "User or admin does not exist" });
+        res.status(401).json({ error: "User or admin does not exist" });
         return;
       }
 
-      const newCoins = user.coins + coins;
-
-      await userDao.updateCoins(uid, newCoins);
+      await userDao.updateCoins(uid, coins);
       await dao.updateLastUpdate(adminId);
 
-      res.json({ coins: newCoins });
+      res.json({ coins });
     } catch (error) {
       res.status(400).json({ error: String(error) });
     }
@@ -49,16 +47,16 @@ export default function AdminRoutes(app) {
       const user = await userDao.findUserById(uid);
 
       if (!admin || !user) {
-        res.sendStatus(401).json({ error: "User or admin does not exist" });
+        res.status(401).json({ error: "User or admin does not exist" });
         return;
       }
 
-      await stravaDao.resetStravaSync(user.stravaId, 0);
+      await stravaDao.resetStravaSync(user.stravaId);
       await dao.updateLastUpdate(adminId);
 
       res.sendStatus(200);
     } catch (error) {
-      res.status(400).json({ error: String(error) });
+      res.status(400).json({ error: error.message });
     }
   };
 
@@ -70,7 +68,7 @@ export default function AdminRoutes(app) {
     const user = await userDao.findUserById(uid);
 
     if (!admin || !user) {
-      res.sendStatus(401).json({ error: "User or admin does not exist" });
+      res.status(401).json({ error: "User or admin does not exist" });
       return;
     }
 
@@ -85,10 +83,10 @@ export default function AdminRoutes(app) {
     const { adminId } = req.body;
 
     const admin = await dao.getAdmin(adminId);
-    const user = await userDao.removeAdmin(uid);
+    const user = await userDao.findUserById(uid);
 
     if (!admin || !user) {
-      res.sendStatus(401).json({ error: "User or admin does not exist" });
+      res.status(401).json({ error: "User or admin does not exist" });
       return;
     }
 
@@ -105,7 +103,7 @@ export default function AdminRoutes(app) {
     const admin = await dao.getAdmin(adminId);
 
     if (!admin) {
-      res.sendStatus(401).json({ error: "Admin does not exist" });
+      res.status(401).json({ error: "Admin does not exist" });
       return;
     }
 
@@ -115,14 +113,38 @@ export default function AdminRoutes(app) {
     res.sendStatus(200);
   };
 
+  const getUsersMatchingSearch = async (req, res) => {
+    const { adminId, searchCriteria } = req.params;
+
+    const admin = await dao.getAdmin(adminId);
+
+    if (!admin) {
+      res.status(401).json({ error: "Admin does not exist" });
+      return;
+    }
+
+    const allUsers = await userDao.findAllUsers();
+    const users = allUsers.filter((user) => {
+      return (
+        user.email.includes(searchCriteria) ||
+        user.firstName.includes(searchCriteria) ||
+        user.lastName.includes(searchCriteria)
+      );
+    });
+    await dao.updateLastUpdate(adminId);
+
+    res.json(users);
+  };
+
   // Define Authenticated Routes
   app.use("/api/admin/", authMiddleware);
 
   // Define Routes
   app.get("/api/admin/:adminId", getAdmin);
-  app.put("/api/admin/users/coins/:uid", addUserCoins);
+  app.put("/api/admin/users/coins/:uid", updateUserCoins);
   app.put("/api/admin/strava/:uid", resetUserStravaSync);
   app.post("/api/admin/:uid", createAdmin);
   app.delete("/api/admin/:uid", deleteAdmin);
   app.put("/api/admin/lootbox/:lootboxId", updateLootboxPrice);
+  app.get("/api/admin/users/:adminId/:searchCriteria", getUsersMatchingSearch);
 }
