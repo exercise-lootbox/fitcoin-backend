@@ -130,7 +130,7 @@ export default function StravaRoutes(app) {
       };
 
       await dao.createStravaUser(stravaUser);
-      res.redirect(frontendURL + "/integrations/strava/redirect");
+      res.redirect(frontendURL + "/#/integrations/strava/redirect");
     } catch (error) {
       console.error("Error during OAuth:", error);
       res.status(500).json({ error: "Failed to authenticate with Strava" });
