@@ -136,9 +136,6 @@ export default function AdminRoutes(app) {
     res.json(users);
   };
 
-  // Define Authenticated Routes
-  app.use("/api/admin/", authMiddleware);
-
   // Define Routes
   app.get("/api/admin/:adminId", getAdmin);
   app.put("/api/admin/users/coins/:uid", updateUserCoins);
