@@ -1,4 +1,4 @@
-# Backend for the FitCoin web application
+# Backend for the FitCoin Web Application
 
 ## UML Diagram
 
